@@ -100,4 +100,4 @@ MonoBehaviour:
   <Row>k__BackingField: 0
   <Column>k__BackingField: 0
   m_SpriteRenderer: {fileID: 230514755754238261}
-  m_AnimSpeed: 250
+  m_AnimSpeed: 125

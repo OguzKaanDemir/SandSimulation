@@ -1,8 +1,6 @@
 using UnityEngine;
-using System.Collections;
-using Scripts.Interfaces;
-using System.Collections.Generic;
 using Scripts.Managers;
+using Scripts.Interfaces;
 using System.Threading.Tasks;
 
 namespace Scripts.Piece
@@ -21,6 +19,7 @@ namespace Scripts.Piece
         private int m_LeftDirection = -1;
 
         private Grid m_CurrentGrid;
+        private bool m_CanSetPosition = true;
 
         private void Start()
         {
@@ -29,39 +28,49 @@ namespace Scripts.Piece
             SetSandPosition();
         }
 
-        public async void SetSandPosition()
+        private void Update()
         {
+            if (m_CurrentGrid == null)
+                SetSandPosition();
+        }
+
+        public void SetSandPosition()
+        {
+            if (!m_CanSetPosition) return;
+
+            m_CanSetPosition = false;
             var rnd = Random.Range(0, 2);
 
             if (GridManager.Ins.IsGridFree(Row - 1, Column))
             {
                 SetGrid(m_DownDirection);
-                Row -= 1;
-                transform.position = CalculatePosition(m_DownDirection);
-                await Task.Delay(m_AnimSpeed);
-                SetSandPosition();
+                SetActions(0);
                 return;
             }
             if (GridManager.Ins.IsGridFree(Row - 1, Column + m_RightDirection))
             {
                 SetGrid(m_RightDirection);
-                Row -= 1;
-                Column += m_RightDirection;
-                transform.position = CalculatePosition(m_RightDirection);
-                await Task.Delay(m_AnimSpeed);
-                SetSandPosition();
+                SetActions(m_RightDirection);
                 return;
             }
             if (GridManager.Ins.IsGridFree(Row - 1, Column + m_LeftDirection))
             {
                 SetGrid(m_LeftDirection);
-                Row -= 1;
-                Column += m_LeftDirection;
-                transform.position = CalculatePosition(m_LeftDirection);
-                await Task.Delay(m_AnimSpeed);
-                SetSandPosition();
+                SetActions(m_LeftDirection);
                 return;
             }
+
+            m_CanSetPosition = true;
+        }
+
+        private async void SetActions(int columnChangeValue)
+        {
+            Row -= 1;
+            Column += columnChangeValue;
+            transform.position = CalculatePosition(columnChangeValue);
+            await Task.Delay(m_AnimSpeed);
+            m_CanSetPosition = true;
+            SetSandPosition();
         }
 
         private void SetGrid(int direction)
@@ -75,11 +84,9 @@ namespace Scripts.Piece
 
         private Vector3 CalculatePosition(int direction)
         {
-            Debug.Log("DÝR*******" + direction);
             var position = transform.position;
             position.y -= m_MoveDistance;
             position.x += m_MoveDistance * direction;
-            Debug.Log("POS********" + position);
             return position;
         }
     }
