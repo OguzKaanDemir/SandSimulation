@@ -1,4 +1,3 @@
-using Scripts.Piece;
 using UnityEngine;
 
 namespace Scripts.Managers
@@ -27,14 +26,6 @@ namespace Scripts.Managers
 
         [SerializeField] private Piece.Grid[,] m_Grids;
 
-        private void OnValidate()
-        {
-            if (m_Grids != null)
-            {
-                UpdateGridPositions();
-            }
-        }
-
         private void Start()
         {
             GenerateGrid();
@@ -58,7 +49,6 @@ namespace Scripts.Managers
 
         public Piece.Grid GetGrid(int row, int column)
         {
-            Debug.Log(m_Grids[column, row].name);
             return m_Grids[column, row];
 
         }
@@ -87,21 +77,6 @@ namespace Scripts.Managers
                     grid.Column = x;
 
                     m_Grids[x, y] = grid;
-                }
-            }
-        }
-
-        private void UpdateGridPositions()
-        {
-            Debug.Log(m_Grids.Length);
-            for (int x = 0; x < m_Columns; x++)
-            {
-                for (int y = 0; y < m_Rows; y++)
-                {
-                    if (m_Grids[x, y] != null)
-                    {
-                        m_Grids[x, y].transform.localPosition = new Vector3(x * m_Offset.x, y * m_Offset.y, 0);
-                    }
                 }
             }
         }
