@@ -5,16 +5,27 @@ namespace Scripts.Managers
 {
     public class GridManager : MonoBehaviour
     {
+        private static GridManager m_Ins;
+        public static GridManager Ins
+        {
+            get
+            {
+                if (!m_Ins)
+                    m_Ins = FindObjectOfType<GridManager>();
+                return m_Ins;
+            }
+        }
+
         [Header("Grid Settings")]
-        [SerializeField] private int m_Rows = 5; 
-        [SerializeField] private int m_Columns = 5; 
-        [SerializeField] private Vector2 m_Offset = new Vector2(1.0f, 1.0f); 
-        [SerializeField] private GameObject m_GridPrefab; 
+        [SerializeField] private int m_Rows = 5;
+        [SerializeField] private int m_Columns = 5;
+        [SerializeField] private Vector2 m_Offset = new Vector2(1.0f, 1.0f);
+        [SerializeField] private GameObject m_GridPrefab;
 
         [Header("Parent Transform")]
         [SerializeField] private Transform m_GridParent;
 
-        private Piece.Grid[,] m_Grids;
+        [SerializeField] private Piece.Grid[,] m_Grids;
 
         private void OnValidate()
         {
@@ -24,10 +35,37 @@ namespace Scripts.Managers
             }
         }
 
-        [ContextMenu("Generate Grid")]
+        private void Start()
+        {
+            GenerateGrid();
+        }
+
+        public bool IsGridFree(int row, int column)
+        {
+            try
+            {
+                if (m_Grids[column, row] != null && m_Grids[column, row].IsEmpty == true)
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return false;
+        }
+
+        public Piece.Grid GetGrid(int row, int column)
+        {
+            Debug.Log(m_Grids[column, row].name);
+            return m_Grids[column, row];
+
+        }
+
         public void GenerateGrid()
         {
-            ClearGrid(); 
+            ClearGrid();
             CreateGrid();
         }
 
@@ -55,6 +93,7 @@ namespace Scripts.Managers
 
         private void UpdateGridPositions()
         {
+            Debug.Log(m_Grids.Length);
             for (int x = 0; x < m_Columns; x++)
             {
                 for (int y = 0; y < m_Rows; y++)
@@ -73,8 +112,6 @@ namespace Scripts.Managers
             {
                 DestroyImmediate(m_GridParent.GetChild(i).gameObject);
             }
-
-            m_Grids = null;
         }
     }
 }
