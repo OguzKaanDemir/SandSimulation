@@ -1,7 +1,7 @@
 using UnityEngine;
 using Scripts.Managers;
 using Scripts.Interfaces;
-using System.Threading.Tasks;
+using System.Collections;
 
 namespace Scripts.Piece
 {
@@ -14,14 +14,14 @@ namespace Scripts.Piece
         [SerializeField] private int m_AnimSpeed;
 
         private float m_MoveDistance;
-        private int m_DownDirection = 0;
-        private int m_RightDirection = 1;
-        private int m_LeftDirection = -1;
+        private const int DownDirection = 0;
+        private const int RightDirection = 1;
+        private const int LeftDirection = -1;
 
         private Grid m_CurrentGrid;
         private bool m_CanSetPosition = true;
 
-        private int m_1stRandomDir, m_2ndRandomDir;
+        private int m_FirstRandomDir, m_SecondRandomDir;
 
         private void Start()
         {
@@ -33,7 +33,9 @@ namespace Scripts.Piece
         private void Update()
         {
             if (m_CurrentGrid == null)
+            {
                 SetSandPosition();
+            }
         }
 
         public void SetColor(Color color)
@@ -41,52 +43,50 @@ namespace Scripts.Piece
             m_SpriteRenderer.color = color;
         }
 
-        public void SetSandPosition()
+        private void SetSandPosition()
         {
             if (!m_CanSetPosition) return;
 
             m_CanSetPosition = false;
             var rnd = Random.Range(0, 2);
+            m_FirstRandomDir = rnd == 0 ? RightDirection : LeftDirection;
+            m_SecondRandomDir = rnd == 0 ? LeftDirection : RightDirection;
 
-            m_1stRandomDir = rnd == 0 ? m_RightDirection : m_LeftDirection;
-            m_2ndRandomDir = rnd == 0 ? m_LeftDirection : m_RightDirection;
-
-            if (GridManager.Ins.IsGridFree(Row - 1, Column))
-            {
-                SetGrid(m_DownDirection);
-                SetActions(0);
+            if (TrySetGrid(DownDirection))
                 return;
-            }
-            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_1stRandomDir))
-            {
-                SetGrid(m_1stRandomDir);
-                SetActions(m_1stRandomDir);
+            if (TrySetGrid(m_FirstRandomDir))
                 return;
-            }
-            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_2ndRandomDir))
-            {
-                SetGrid(m_2ndRandomDir);
-                SetActions(m_2ndRandomDir);
+            if (TrySetGrid(m_SecondRandomDir))
                 return;
-            }
 
             m_CanSetPosition = true;
             Invoke(nameof(SetSandPosition), 0.75f);
         }
 
-        private async void SetActions(int columnChangeValue)
+        private bool TrySetGrid(int direction)
+        {
+            if (GridManager.Ins.IsGridFree(Row - 1, Column + direction))
+            {
+                SetGrid(direction);
+                StartCoroutine(ExecuteActions(direction));
+                return true;
+            }
+            return false;
+        }
+
+        private IEnumerator ExecuteActions(int columnChangeValue)
         {
             Row -= 1;
             Column += columnChangeValue;
             SetPosition();
-            await Task.Delay(m_AnimSpeed);
+            yield return new WaitForSeconds(m_AnimSpeed / 1000f); 
             m_CanSetPosition = true;
             SetSandPosition();
         }
 
         private void SetGrid(int direction)
         {
-            if (m_CurrentGrid)
+            if (m_CurrentGrid != null)
                 m_CurrentGrid.IsEmpty = true;
 
             m_CurrentGrid = GridManager.Ins.GetGrid(Row - 1, Column + direction);

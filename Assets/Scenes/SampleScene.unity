@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SandPrefab: {fileID: 3832539968542911327, guid: a70faed419f51c847a655579c72dda38, type: 3}
-  colorChangeSpeed: 0.25
+  m_ColorChangeSpeed: 0.05
 --- !u!1 &1376412330
 GameObject:
   m_ObjectHideFlags: 0
