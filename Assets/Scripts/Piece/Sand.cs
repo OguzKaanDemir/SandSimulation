@@ -21,10 +21,12 @@ namespace Scripts.Piece
         private Grid m_CurrentGrid;
         private bool m_CanSetPosition = true;
 
+        private int m_1stRandomDir, m_2ndRandomDir;
+
         private void Start()
         {
             var sprite = m_SpriteRenderer.sprite;
-            m_MoveDistance = (sprite.texture.width / (sprite.pixelsPerUnit / 100)) / 100 - 0.02f;
+            m_MoveDistance = (sprite.texture.width / (sprite.pixelsPerUnit / 100)) / 100 - 0.015f;
             SetSandPosition();
         }
 
@@ -34,6 +36,11 @@ namespace Scripts.Piece
                 SetSandPosition();
         }
 
+        public void SetColor(Color color)
+        {
+            m_SpriteRenderer.color = color;
+        }
+
         public void SetSandPosition()
         {
             if (!m_CanSetPosition) return;
@@ -41,33 +48,37 @@ namespace Scripts.Piece
             m_CanSetPosition = false;
             var rnd = Random.Range(0, 2);
 
+            m_1stRandomDir = rnd == 0 ? m_RightDirection : m_LeftDirection;
+            m_2ndRandomDir = rnd == 0 ? m_LeftDirection : m_RightDirection;
+
             if (GridManager.Ins.IsGridFree(Row - 1, Column))
             {
                 SetGrid(m_DownDirection);
                 SetActions(0);
                 return;
             }
-            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_RightDirection))
+            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_1stRandomDir))
             {
-                SetGrid(m_RightDirection);
-                SetActions(m_RightDirection);
+                SetGrid(m_1stRandomDir);
+                SetActions(m_1stRandomDir);
                 return;
             }
-            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_LeftDirection))
+            if (GridManager.Ins.IsGridFree(Row - 1, Column + m_2ndRandomDir))
             {
-                SetGrid(m_LeftDirection);
-                SetActions(m_LeftDirection);
+                SetGrid(m_2ndRandomDir);
+                SetActions(m_2ndRandomDir);
                 return;
             }
 
             m_CanSetPosition = true;
+            Invoke(nameof(SetSandPosition), 0.75f);
         }
 
         private async void SetActions(int columnChangeValue)
         {
             Row -= 1;
             Column += columnChangeValue;
-            transform.position = CalculatePosition(columnChangeValue);
+            SetPosition();
             await Task.Delay(m_AnimSpeed);
             m_CanSetPosition = true;
             SetSandPosition();
@@ -82,12 +93,9 @@ namespace Scripts.Piece
             m_CurrentGrid.IsEmpty = false;
         }
 
-        private Vector3 CalculatePosition(int direction)
+        private void SetPosition()
         {
-            var position = transform.position;
-            position.y -= m_MoveDistance;
-            position.x += m_MoveDistance * direction;
-            return position;
+            transform.position = m_CurrentGrid.transform.position;
         }
     }
 }

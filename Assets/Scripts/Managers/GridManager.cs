@@ -50,7 +50,6 @@ namespace Scripts.Managers
         public Piece.Grid GetGrid(int row, int column)
         {
             return m_Grids[column, row];
-
         }
 
         public void GenerateGrid()

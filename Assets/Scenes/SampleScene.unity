@@ -184,7 +184,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 1.05
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -209,7 +209,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0.56, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -245,9 +245,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 262f9e4da54447a448605308ee7a3d40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rows: 35
-  m_Columns: 25
-  m_Offset: {x: 0.15, y: 0.15}
+  m_Rows: 100
+  m_Columns: 60
+  m_Offset: {x: 0.019, y: 0.019}
   m_GridPrefab: {fileID: 3313675623417115652, guid: ff157930e940c244f8759511a596c5f1, type: 3}
   m_GridParent: {fileID: 1376412331}
 --- !u!4 &1208789315
@@ -278,6 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SandPrefab: {fileID: 3832539968542911327, guid: a70faed419f51c847a655579c72dda38, type: 3}
+  colorChangeSpeed: 0.25
 --- !u!1 &1376412330
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,7 +304,7 @@ Transform:
   m_GameObject: {fileID: 1376412330}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.37, y: -3.53, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

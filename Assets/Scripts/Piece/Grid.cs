@@ -1,6 +1,7 @@
 using UnityEngine;
 using Scripts.Managers;
 using Scripts.Interfaces;
+using System.Threading.Tasks;
 
 namespace Scripts.Piece
 {
@@ -10,11 +11,24 @@ namespace Scripts.Piece
     {
         [field: SerializeField] public int Row { get; set; }
         [field: SerializeField] public int Column { get; set; }
-        [field: SerializeField] public bool IsEmpty {  get; set; }
+        [field: SerializeField] public bool IsEmpty { get; set; }
 
-        private void OnMouseDown()
+        private bool m_CanTriggerSpawn = true;
+
+        private void OnMouseDrag()
         {
+            DelayedSpawn();
+        }
+
+        private async void DelayedSpawn()
+        {
+            if (!m_CanTriggerSpawn) return;
+            m_CanTriggerSpawn = false;
+
+            await Task.Delay(5);
+
             SpawnManager.Ins.SpawnSand(this);
+            m_CanTriggerSpawn = true;
         }
     }
 }
